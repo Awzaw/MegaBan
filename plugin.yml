@@ -1,0 +1,25 @@
+main: awzaw\megaban\Main
+api: [2.0.0]
+load: STARTUP
+
+name: MegaBan
+description: ban players using multiple vectors
+version: 1.0.0
+author: awzaw
+website: https://github.com/Awzaw/MegaBan
+
+commands:
+  megaban:
+    description: MegaBan a player
+    usage: "/megaban <player> [options]"
+    permission: megaban
+    aliases: [mb]
+  megaunban:
+    description: Pardon a MegaBanned player
+    usage: "/megaunban <player> AND YOU MUST pardon, pardonip, pardoncid manually"
+    permission: megaban
+    aliases: [mb]
+permissions:
+  megaban:
+    default: op
+    description: "MegaBan"
