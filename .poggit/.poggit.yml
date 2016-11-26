@@ -1,7 +1,0 @@
----
-branches: master
-projects:
-  MegaBan:
-    path: ""
-    model: default
-...
