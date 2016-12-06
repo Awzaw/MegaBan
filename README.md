@@ -12,7 +12,9 @@ Permissions:
 Commands:
 
 `/megaban {player}`
+
 `/megaunban {player}`
+
 `/megaban clear`
 
 
