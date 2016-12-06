@@ -4,7 +4,7 @@ load: STARTUP
 
 name: MegaBan
 description: ban players using multiple vectors
-version: 1.0.0
+version: 1.1
 author: awzaw
 website: https://github.com/Awzaw/MegaBan
 
@@ -13,12 +13,12 @@ commands:
     description: MegaBan a player
     usage: "/megaban <player> [options]"
     permission: megaban
-    aliases: [mb]
+    aliases: [mban]
   megaunban:
     description: Pardon a MegaBanned player
     usage: "/megaunban <player> AND YOU MUST pardon, pardonip, pardoncid manually"
     permission: megaban
-    aliases: [mb]
+    aliases: [megapardon, mpardon]
 permissions:
   megaban:
     default: op

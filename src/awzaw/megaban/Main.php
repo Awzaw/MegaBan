@@ -18,14 +18,16 @@ class Main extends PluginBase implements Listener {
 
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->saveDefaultConfig();
-        
+
         @mkdir($this->getDataFolder());
 
         if (file_exists($this->getDataFolder() . "megabans.txt")) {
             $file = file($this->getDataFolder() . "megabans.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($file as $line) {
                 $array = explode("|", trim($line));
-                $this->bans[$array[0]] = $array[1];
+                if (!isset($array[2])) $array[2] = "";
+                if (!isset($array[3])) $array[3] = "";
+                $this->bans[$array[0]] = array($array[1], $array[2], $array[3]);// SKIN KEY => NAME, CID, IP
             }
         }
     }
@@ -36,36 +38,34 @@ class Main extends PluginBase implements Listener {
 
     private function saveData() {
         $string = "";
-        foreach ($this->bans as $client => $name) {
-            $string .= $client . "|" . $name . "\n";
+        foreach ($this->bans as $client => $data) {
+            $string .= $client . "|" . $data["name"] . "|" . $data["CID"] . "|" . $data["IP"] . "\n";
         }
         file_put_contents($this->getDataFolder() . "megabans.txt", $string);
     }
 
     public function banClient(Player $player) {
 
-        if (method_exists($this->getServer(), "getCIDBans")) {
-            $this->getServer()->getCIDBans()->addBan($player->getClientId(), $this->getConfig()->get("message"), null, $player->getName());
-            $this->getServer()->getIPBans()->addBan($player->getAddress(), $this->getConfig()->get("message"), null, $player->getName());
-            $this->getServer()->getNetwork()->blockAddress($player->getAddress(), -1);
-            $player->setBanned(true);
-        } else {
+        //IP Ban
+        $this->getServer()->getIPBans()->addBan($player->getAddress(), $this->getConfig()->get("message"), null, $player->getName());
+        $this->getServer()->getNetwork()->blockAddress($player->getAddress(), -1);
+        $player->setBanned(true);
 
-            $this->getServer()->getIPBans()->addBan($player->getAddress(), $this->getConfig()->get("message"), null, $player->getName());
-            $this->getServer()->getNetwork()->blockAddress($player->getAddress(), -1);
-            $player->setBanned(true);
-        }
-
-        $this->bans[hash("md5", $player->getSkinData())] = strtolower($player->getName());
+        //Record Skin Hash, CID and IP Address: TODO add config to choose which bans are in force
+        $this->bans[hash("md5", $player->getSkinData())] = ["name" => strtolower($player->getName()), "CID" => $player->getClientId(), "IP" => $player->getAddress()];
+        
         $string = $this->getConfig()->get("banmessage");
         $player->kick($string);
         $this->saveData();
     }
 
     public function pardonClient(string $name) {
-        if (($key = array_search(strtolower($name), $this->bans)) !== false) {
+        if (($key = $this->in_array_r(strtolower($name), $this->bans)) !== false) {
+            $îpaddress = $this->bans[$key]["IP"];
             unset($this->bans[$key]);
             $this->saveData();
+            $this->getServer()->getNameBans()->remove($name);//TODO Pardon IP too
+            $this->getServer()->getIPBans()->remove($îpaddress);
             return true;
         }
         return false;
@@ -74,9 +74,9 @@ class Main extends PluginBase implements Listener {
     public function isBanned($banned) {
 
         if ($banned instanceof Player) {
-            $banned = hash("md5", $banned->getSkinData());
+            $bannedskin = hash("md5", $banned->getSkinData());
         }
-        return isset($this->bans[$banned]);
+        return (isset($this->bans[$bannedskin]) || in_array_r($banned->getClientId(), $this->bans));
     }
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args) {
@@ -90,7 +90,7 @@ class Main extends PluginBase implements Listener {
                 if (strtolower($args[0]) === "clear") {
                     $this->bans = [];
                     $this->saveData();
-                    $sender->sendMessage("MegaBan list cleared, you still need to pardon, pardon IP etc");
+                    $sender->sendMessage("All MegaBan data cleared. Players may still be Banned or IP Banned");
                     return true;
                 }
 
@@ -106,11 +106,12 @@ class Main extends PluginBase implements Listener {
                 break;
 
             case "megaunban":
+            case "megapardon":
                 if (!isset($args[0])) {
                     return false;
                 }
                 if ($this->pardonClient($args[0])) {
-                    $sender->sendMessage("MegaBan removed for " . $args[0]);
+                    $sender->sendMessage("On next reboot MegaBan will be removed for " . $args[0]);
                 } else {
                     $sender->sendMessage($args[0] . " was not MegaBanned");
                 }
@@ -126,5 +127,15 @@ class Main extends PluginBase implements Listener {
             $event->setCancelled();
         }
     }
+    
+    public function in_array_r($needle, $haystack, $strict = false) {
+    foreach ($haystack as $key => $item) {
+        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && $this->in_array_r($needle, $item, $strict))) {
+            return $key;
+        }
+    }
+
+    return false;
+}
 
 }
