@@ -18,7 +18,12 @@ Commands:
 `/megaban clear`
 
 
-Please note that /megaban can ONLY be used when the player to be banned is online. /megaunban {player} can be used when when the player is not online
+##Please note:
+
+/megaban can ONLY be used when the player to be banned is online
+
+/megaunban {player} will pardon IGN, CID, Skin and IP Address on the next reboot
+
 /megaunban clears all the MegaBan data, it does NOT pardon player IGNs or IP addresses for every Megabanned player.
 
 
