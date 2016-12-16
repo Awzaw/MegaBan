@@ -25,9 +25,11 @@ class Main extends PluginBase implements Listener {
             $file = file($this->getDataFolder() . "megabans.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($file as $line) {
                 $array = explode("|", trim($line));
-                if (!isset($array[2])) $array[2] = "";
-                if (!isset($array[3])) $array[3] = "";
-                $this->bans[$array[0]] = array($array[1], $array[2], $array[3]);// SKIN KEY => NAME, CID, IP
+                if (!isset($array[2]))
+                    $array[2] = "";
+                if (!isset($array[3]))
+                    $array[3] = "";
+                $this->bans[$array[0]] = array($array[1], $array[2], $array[3]); // SKIN KEY => NAME, CID, IP
             }
         }
     }
@@ -53,7 +55,7 @@ class Main extends PluginBase implements Listener {
 
         //Record Skin Hash, CID and IP Address: TODO add config to choose which bans are in force
         $this->bans[hash("md5", $player->getSkinData())] = ["name" => strtolower($player->getName()), "CID" => $player->getClientId(), "IP" => $player->getAddress()];
-        
+
         $string = $this->getConfig()->get("banmessage");
         $player->kick($string);
         $this->saveData();
@@ -64,7 +66,7 @@ class Main extends PluginBase implements Listener {
             $îpaddress = $this->bans[$key]["IP"];
             unset($this->bans[$key]);
             $this->saveData();
-            $this->getServer()->getNameBans()->remove($name);//TODO Pardon IP too
+            $this->getServer()->getNameBans()->remove($name);
             $this->getServer()->getIPBans()->remove($îpaddress);
             return true;
         }
@@ -127,15 +129,15 @@ class Main extends PluginBase implements Listener {
             $event->setCancelled();
         }
     }
-    
-    public function in_array_r($needle, $haystack, $strict = false) {
-    foreach ($haystack as $key => $item) {
-        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && $this->in_array_r($needle, $item, $strict))) {
-            return $key;
-        }
-    }
 
-    return false;
-}
+    public function in_array_r($needle, $haystack, $strict = false) {
+        foreach ($haystack as $key => $item) {
+            if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && $this->in_array_r($needle, $item, $strict))) {
+                return $key;
+            }
+        }
+
+        return false;
+    }
 
 }
