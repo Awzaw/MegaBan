@@ -78,7 +78,7 @@ class Main extends PluginBase implements Listener {
         if ($banned instanceof Player) {
             $bannedskin = hash("md5", $banned->getSkinData());
         }
-        return (isset($this->bans[$bannedskin]) || in_array_r($banned->getClientId(), $this->bans));
+        return (isset($this->bans[$bannedskin]) || $this->in_array_r($banned->getClientId(), $this->bans));
     }
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args) {
