@@ -4,4 +4,5 @@ projects:
   MegaBan:
     path: ""
     model: default
+    icon: megaban.png
 ...
