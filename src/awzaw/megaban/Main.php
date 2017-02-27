@@ -54,7 +54,7 @@ class Main extends PluginBase implements Listener {
         $player->setBanned(true);
 
         //Record Skin Hash, CID and IP Address: TODO add config to choose which bans are in force
-        $this->bans[hash("md5", $player->getSkinData())] = ["name" => strtolower($player->getName()), "CID" => $player->getClientId(), "IP" => $player->getAddress()];
+        $this->bans[hash("md5", $player->getSkinData())] = ["name" => strtolower($player->getName()), "CID" => $player->getUniqueId(), "IP" => $player->getAddress()];
 
         $string = $this->getConfig()->get("banmessage");
         $player->kick($string);
@@ -78,7 +78,7 @@ class Main extends PluginBase implements Listener {
         if ($banned instanceof Player) {
             $bannedskin = hash("md5", $banned->getSkinData());
         }
-        return (isset($this->bans[$bannedskin]) || $this->in_array_r($banned->getClientId(), $this->bans));
+        return (isset($this->bans[$bannedskin]) || $this->in_array_r($banned->getUniqueId(), $this->bans));
     }
 
     public function onCommand(CommandSender $sender, Command $command, $label, array $args) {
@@ -105,7 +105,6 @@ class Main extends PluginBase implements Listener {
                     $sender->sendMessage("Player " . $p . " is not online");
                 }
                 return true;
-                break;
 
             case "megaunban":
             case "megapardon":
@@ -118,15 +117,15 @@ class Main extends PluginBase implements Listener {
                     $sender->sendMessage($args[0] . " was not MegaBanned");
                 }
                 return true;
-                break;
         }
         return true;
     }
 
     public function onPreLogin(PlayerPreLoginEvent $event) {
+        if ($event->isCancelled()) return;
         if ($this->isBanned($event->getPlayer())) {
             $event->setKickMessage($this->getConfig()->get("banmessage"));
-            $event->setCancelled();
+            $event->setCancelled(true);
         }
     }
 
