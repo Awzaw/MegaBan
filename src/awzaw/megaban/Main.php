@@ -8,7 +8,6 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
-use pocketmine\Server;
 
 class Main extends PluginBase implements Listener {
 
@@ -77,6 +76,8 @@ class Main extends PluginBase implements Listener {
 
         if ($banned instanceof Player) {
             $bannedskin = hash("md5", $banned->getSkinData());
+        } else {
+            return false;
         }
         return (isset($this->bans[$bannedskin]) || $this->in_array_r($banned->getUniqueId(), $this->bans));
     }
@@ -99,7 +100,7 @@ class Main extends PluginBase implements Listener {
                 $p = array_shift($args);
                 $player = $this->getServer()->getPlayer($p);
                 if ($player !== null and $player->isOnline()) {
-                    $this->banClient($player, isset($args[0]) ? implode(" ", $args) : "");
+                    $this->banClient($player);
                     $sender->sendMessage("MegaBanned " . $p);
                 } else {
                     $sender->sendMessage("Player " . $p . " is not online");
