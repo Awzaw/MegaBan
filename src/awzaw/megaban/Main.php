@@ -82,7 +82,7 @@ class Main extends PluginBase implements Listener {
         return (isset($this->bans[$bannedskin]) || $this->in_array_r($banned->getUniqueId(), $this->bans));
     }
 
-    public function onCommand(CommandSender $sender, Command $command, $label, array $args) {
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         switch (strtolower($command->getName())) {
 
             case "megaban":
