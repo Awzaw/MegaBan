@@ -62,11 +62,11 @@ class Main extends PluginBase implements Listener {
 
     public function pardonClient(string $name) {
         if (($key = $this->in_array_r(strtolower($name), $this->bans)) !== false) {
-            $îpaddress = $this->bans[$key]["IP"];
+            $ipaddress = $this->bans[$key]["IP"];
             unset($this->bans[$key]);
             $this->saveData();
             $this->getServer()->getNameBans()->remove($name);
-            $this->getServer()->getIPBans()->remove($îpaddress);
+            $this->getServer()->getIPBans()->remove($ipaddress);
             return true;
         }
         return false;
