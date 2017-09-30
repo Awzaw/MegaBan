@@ -53,7 +53,7 @@ class Main extends PluginBase implements Listener {
         $player->setBanned(true);
 
         //Record Skin Hash, CID and IP Address: TODO add config to choose which bans are in force
-        $this->bans[hash("md5", $player->getSkinData())] = ["name" => strtolower($player->getName()), "CID" => $player->getUniqueId(), "IP" => $player->getAddress()];
+        $this->bans[hash("md5", $player->getSkin()->getSkinData())] = ["name" => strtolower($player->getName()), "CID" => $player->getUniqueId(), "IP" => $player->getAddress()];
 
         $string = $this->getConfig()->get("banmessage");
         $player->kick($string);
@@ -75,7 +75,7 @@ class Main extends PluginBase implements Listener {
     public function isBanned($banned) {
 
         if ($banned instanceof Player) {
-            $bannedskin = hash("md5", $banned->getSkinData());
+            $bannedskin = hash("md5", $banned->getSkin()->getSkinData());
         } else {
             return false;
         }

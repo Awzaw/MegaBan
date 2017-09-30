@@ -1,9 +1,9 @@
 main: awzaw\megaban\Main
-api: [3.0.0-ALPHA7, 3.0.0-ALPHA8]
+api: [3.0.0-ALPHA9]
 load: STARTUP
 name: MegaBan
 description: ban players using multiple vectors
-version: 1.2.5-1.alpha8
+version: 1.2.5-2.alpha9
 author: awzaw
 website: https://github.com/Awzaw/MegaBan
 commands:
